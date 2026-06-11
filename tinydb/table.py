@@ -3,6 +3,7 @@ This module implements tables, the central place for accessing and manipulating
 data in TinyDB.
 """
 
+import copy
 from collections.abc import Callable, Iterable, Iterator, Mapping
 from typing import (
     NoReturn,
@@ -244,7 +245,7 @@ class Table:
         # query
         cached_results = self._query_cache.get(cond)
         if cached_results is not None:
-            return cached_results[:]
+            return copy.deepcopy(cached_results)
 
         # Perform the search by applying the query to all documents.
         # Then, only if the document matches the query, convert it
@@ -272,7 +273,7 @@ class Table:
                                                    lambda: True)
         if is_cacheable():
             # Update the query cache
-            self._query_cache[cond] = docs[:]
+            self._query_cache[cond] = copy.deepcopy(docs)
 
         return docs
 
